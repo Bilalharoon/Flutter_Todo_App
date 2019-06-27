@@ -26,10 +26,6 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   Animation<double> opacityAnim;
   Animation<double> scaleAnim;
 
-  double positionX = 0;
-  double positionY = 0;
-  double opacity = 1.0;
-  double scale = 1;
   final List<String> days = ["SUN", "MON", "TUE", "WEN", "THU", "FRI", "SAT"];
 
   @override
@@ -45,31 +41,20 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
         curve: curve,
         parent: controller,
       ),
-    )..addListener(
-        () => this.setState(() => positionX = positionXAnim.value),
-      );
+    );
 
-    positionYAnim = Tween<double>(begin: 0, end: -350).animate(
-      CurvedAnimation(
-        curve: curve,
-        parent: controller,
-      ),
-    )..addListener(
-        () => this.setState(() => positionY = positionYAnim.value),
-      );
+    positionYAnim = Tween<double>(begin: 0, end: -350).animate(CurvedAnimation(
+      curve: curve,
+      parent: controller,
+    ));
 
     opacityAnim = Tween<double>(begin: 1.0, end: 0).animate(CurvedAnimation(
-        curve: Interval(0, 0.5, curve: curve), parent: controller))
-      ..addListener(
-        () => this.setState(() => opacity = opacityAnim.value),
-      );
+        curve: Interval(0, 0.5, curve: curve), parent: controller));
 
     scaleAnim = Tween<double>(begin: 1, end: 20).animate(
       CurvedAnimation(
           curve: Interval(0.5, 1, curve: curve), parent: controller),
-    )..addListener(
-        () => this.setState(() => scale = scaleAnim.value),
-      );
+    );
   }
 
   @override
@@ -121,47 +106,52 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
           )
         ],
       ),
-      floatingActionButton: Transform.translate(
-        offset: Offset(
-          this.positionX,
-          this.positionY,
-        ),
-        child: Transform.scale(
-          scale: this.scale,
-          child: FloatingActionButton(
-            onPressed: () async {
-              await controller.forward();
+      floatingActionButton: AnimatedBuilder(
+        animation: controller,
+        builder: (BuildContext ctx, Widget child) => Transform.translate(
+              offset: Offset(
+                this.positionXAnim.value,
+                this.positionYAnim.value,
+              ),
+              child: Transform.scale(
+                scale: this.scaleAnim.value,
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    await controller.forward();
 
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                    transitionDuration: Duration(milliseconds: 100),
-                    pageBuilder: (BuildContext context, Animation<double> entry,
-                            Animation<double> exit) =>
-                        NewPage(this.controller),
-                    transitionsBuilder: (BuildContext ctx,
-                        Animation<double> entry,
-                        Animation<double> exit,
-                        Widget child) {
-                      return FadeTransition(
-                        opacity: Tween<double>(begin: 0, end: 1).animate(
-                          CurvedAnimation(
-                            curve: Curves.fastOutSlowIn,
-                            parent: entry,
-                          ),
-                        ),
-                        child: child,
-                      );
-                    }),
-              );
-            },
-            backgroundColor: Color(0xffFC3868),
-            child: Opacity(
-              child: Icon(Icons.add),
-              opacity: this.opacity,
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: Duration(milliseconds: 100),
+                        pageBuilder: (BuildContext context,
+                                Animation<double> entry,
+                                Animation<double> exit) =>
+                            NewPage(this.controller),
+                        transitionsBuilder: (BuildContext ctx,
+                            Animation<double> entry,
+                            Animation<double> exit,
+                            Widget child) {
+                          return FadeTransition(
+                            opacity: Tween<double>(begin: 0, end: 1).animate(
+                              CurvedAnimation(
+                                curve: Curves.fastOutSlowIn,
+                                parent: entry,
+                              ),
+                            ),
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  backgroundColor: Color(0xffFC3868),
+                  child: Opacity(
+                    child: Icon(Icons.add),
+                    opacity: this.opacityAnim.value,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
       ),
     );
   }
@@ -450,19 +440,18 @@ class _NewPageState extends State<NewPage> with TickerProviderStateMixin {
         return true;
       },
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              Container(
-                height: 800,
-                child: Image.asset(
-                  "assets/bg.jpg",
-                  colorBlendMode: BlendMode.darken,
-                  color: Color(0xff81779D),
-                  fit: BoxFit.cover,
-                ),
+              Image.asset(
+                "assets/bg.jpg",
+                colorBlendMode: BlendMode.darken,
+                color: Color(0xff81779D),
+                fit: BoxFit.cover,
+                height: double.infinity,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 50.0, right: 50.0),
