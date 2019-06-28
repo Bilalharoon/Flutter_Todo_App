@@ -74,35 +74,22 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
           ),
           // calender
           Calender(days: days),
-          Divider(),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Task(
-                imgURL:
-                    "https://images.unsplash.com/photo-1506919258185-6078bba55d2a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=815&q=80",
-                taskDescription: "Meet with Mark",
-                location: "Starbucks",
-                time: "1pm",
-              ),
-              Divider(),
-              Task(
-                imgURL:
-                    "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1351&q=80",
-                time: "12am",
-                location: "Office",
-                taskDescription: "Meet with Jhon",
-              ),
-              Divider(),
-              Task(
-                imgURL:
-                    "https://images.unsplash.com/photo-1547624643-3bf761b09502?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80",
-                location: "Office",
-                time: "4pm",
-                taskDescription: "Talk with designer",
-              ),
-              Divider(),
-            ],
+          // Divider(),
+          Expanded(
+            child: ListView.separated(
+              itemCount: 10,
+              scrollDirection: Axis.vertical,
+              itemBuilder: (BuildContext ctx, int index) {
+                return Task(
+                  imgURL:
+                      "https://images.unsplash.com/photo-1506919258185-6078bba55d2a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=815&q=80",
+                  taskDescription: "Meet with Mark",
+                  location: "Starbucks",
+                  time: "1pm",
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) => Divider(),
+            ),
           )
         ],
       ),
